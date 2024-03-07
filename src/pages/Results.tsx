@@ -44,6 +44,7 @@ const Results: React.FC = () => {
     setOptions({
       ...options,
       sortBy: selectedValue,
+      order: checked ? -1 : 1,
     });
   };
 
@@ -57,7 +58,7 @@ const Results: React.FC = () => {
 
   return (
     <>
-      {isLoading && <CircularProgress />}
+      {isLoading && <CircularProgress sx={{ color: "#252d35" }} />}
       <Alert
         isLoading={isLoading}
         showAlert={showAlert}

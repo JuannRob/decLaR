@@ -31,7 +31,7 @@ const Alert: React.FC<Props> = ({ isLoading, showAlert, setShowAlert }) => {
     <Snackbar
       open={showAlert}
       onClose={() => setShowAlert(false)}
-      autoHideDuration={10000}
+      autoHideDuration={25000}
       message={alertMessageNode}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       sx={{

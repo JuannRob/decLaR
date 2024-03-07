@@ -1,6 +1,5 @@
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AddIcon from "@mui/icons-material/Add";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -26,17 +25,6 @@ const Header = () => {
               />
             </IconButton>
           )}
-        </div>
-        <div>
-          <IconButton
-            aria-label="navigate back"
-            size="medium"
-            color="primary"
-            type="button"
-            onClick={() => navigate("/decretos/nuevo")}
-          >
-            <AddIcon fontSize="inherit" sx={{ color: "white", fontSize: 40 }} />
-          </IconButton>
         </div>
       </div>
     </header>
