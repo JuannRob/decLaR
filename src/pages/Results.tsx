@@ -14,18 +14,20 @@ import {
 } from "@mui/material";
 import { ApiRequest, Options } from "../ts/Search.interface";
 import ScrollTopBtn from "../components/ScrollTopBtn";
+import Alert from "../components/Alert";
 
 const Results: React.FC = () => {
   const initialOptions: Options = {
     limit: 10,
     page: 1,
-    sortBy: "num",
-    order: 1,
+    sortBy: "tema",
+    order: -1,
   };
 
   const { state } = useLocation();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState<Options>(initialOptions);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   // [options] is useFetch's dependency array
   const { data, isLoading, error } = useFetch(
@@ -56,6 +58,11 @@ const Results: React.FC = () => {
   return (
     <>
       {isLoading && <CircularProgress />}
+      <Alert
+        isLoading={isLoading}
+        showAlert={showAlert}
+        setShowAlert={setShowAlert}
+      />
       {data && (
         <div className="w-full flex my-11 xl:my-15">
           <div className="w-1/4 p-10 absolute -left-80">
