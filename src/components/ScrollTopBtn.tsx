@@ -21,8 +21,10 @@ const ScrollTopBtn: React.FC = () => {
     >
       <Button
         sx={{
-          "& .MuiButton-contained.MuiButton-colorPrimary": {
-            color: "red",
+          backgroundColor: "#252d35",
+          "&:hover": {
+            backgroundColor: "#fff",
+            color: "#252d35",
           },
         }}
         variant="contained"
