@@ -11,6 +11,8 @@ interface Props {
 
 const PaginationBar: React.FC<Props> = ({ options, setOptions, totalDocs }) => {
   const handleChange = (
+    // eslint-disable-next-line
+    // @ts-ignore
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
