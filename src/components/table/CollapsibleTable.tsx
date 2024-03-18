@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TableFooter,
 } from "@mui/material";
 import Row from "./Row";
 import PaginationBar from "./PaginationBar";
@@ -44,13 +45,15 @@ const CollapsibleTable: React.FC<Props> = ({ data, options, setOptions }) => {
               <Row key={decree._id} decree={decree} />
             ))}
           </TableBody>
+          <TableFooter>
+            <PaginationBar
+              totalDocs={data.totalDocs}
+              options={options}
+              setOptions={setOptions}
+            />
+          </TableFooter>
         </Table>
       </TableContainer>
-      <PaginationBar
-        totalDocs={data.totalDocs}
-        options={options}
-        setOptions={setOptions}
-      />
     </>
   );
 };

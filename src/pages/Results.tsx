@@ -25,8 +25,8 @@ const Results: React.FC = () => {
   };
 
   const { state } = useLocation();
-  const [checked, setChecked] = useState(false);
   const [options, setOptions] = useState<Options>(initialOptions);
+  const [checked, setChecked] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
 
   // [options] is useFetch's dependency array
@@ -41,19 +41,20 @@ const Results: React.FC = () => {
 
   const handleSelectChange = (e: SelectChangeEvent) => {
     const selectedValue: string = e.target.value;
-    setOptions({
-      ...options,
+    setOptions((prevOptions) => ({
+      ...prevOptions,
       sortBy: selectedValue,
-      order: checked ? -1 : 1,
-    });
+      order: checked ? 1 : -1,
+    }));
   };
 
   const handleSwitch = () => {
-    setChecked(!checked);
-    setOptions({
-      ...options,
-      order: checked ? -1 : 1,
-    });
+    const newChecked = !checked;
+    setChecked(newChecked);
+    setOptions((prevOptions) => ({
+      ...prevOptions,
+      order: newChecked ? 1 : -1,
+    }));
   };
 
   return (

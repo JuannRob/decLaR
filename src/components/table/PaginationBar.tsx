@@ -34,26 +34,6 @@ const PaginationBar: React.FC<Props> = ({ options, setOptions, totalDocs }) => {
 
   return (
     <TablePagination
-      sx={{
-        "& .MuiTableCell": {
-          color: "red",
-          borderColor: "red",
-        },
-        "& .MuiTablePagination-toolbar": {
-          marginTop: 2,
-          backgroundColor: "",
-          color: "white",
-        },
-        "& .MuiTablePagination-selectIcon": {
-          color: "white",
-        },
-        "& .MuiTablePagination-menuItem": {
-          backgroundColor: "yellow",
-        },
-        "& .Mui-disabled": {
-          color: "#757575",
-        },
-      }}
       page={options.page - 1}
       count={totalDocs}
       onPageChange={handleChange}
