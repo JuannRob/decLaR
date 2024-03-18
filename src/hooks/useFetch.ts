@@ -20,12 +20,9 @@ export function useFetch(query: ApiRequest, deps: [Options]): FetchResult {
     const fetchData = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const response: AxiosResponse = await axios.get(
-          `${BASE_URL}/decretos`,
-          {
-            params,
-          },
-        );
+        const response: AxiosResponse = await axios.get(`${BASE_URL}/decrees`, {
+          params,
+        });
         setData(response.data.data);
       } catch (err) {
         setError(err as AxiosError);
