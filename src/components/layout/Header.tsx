@@ -1,11 +1,18 @@
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useLocation, useNavigate } from "react-router-dom";
+import { User } from "../../ts/api.interface";
 
-const Header = () => {
+interface Props {
+  user: User | null;
+  token: string;
+}
+
+const Header: React.FC<Props> = ({ user, token }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isAtHome = location.pathname === "/";
+  const isLogged = user !== null;
 
   return (
     <header>

@@ -57,3 +57,17 @@ export interface Decree {
   claves: string;
   __v: number;
 }
+
+enum UserRole {
+  Viewer = "viewer",
+  Admin = "admin",
+  Editor = "editor",
+}
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  date: Date;
+}
