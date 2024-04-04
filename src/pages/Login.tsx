@@ -11,19 +11,14 @@ import {
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { Dispatcher } from "../ts/state.type";
-import { User } from "../ts/api.interface";
+import { useNavigate } from "react-router-dom";
 
 const BASE_URL: string = import.meta.env.VITE_API_URL;
 
-interface Props {
-  setUser: Dispatcher<User | null>;
-  setToken: Dispatcher<string>;
-}
-
-const Login: React.FC<Props> = ({ setToken, setUser }) => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -33,11 +28,13 @@ const Login: React.FC<Props> = ({ setToken, setUser }) => {
         { withCredentials: true },
       );
       const tokenFromCookie = Cookies.get(response.data.User._id);
-      setUser(response.data.User);
-      setToken(tokenFromCookie || "");
+      if (tokenFromCookie !== undefined) {
+        return "";
+      }
     } catch (err) {
       console.log(err);
     }
+    navigate("/");
   };
 
   return (
