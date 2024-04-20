@@ -6,60 +6,48 @@ import {
   Container,
   CssBaseline,
   TextField,
-  Typography,
 } from "@mui/material";
-import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
-import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
-
-const BASE_URL: string = import.meta.env.VITE_API_URL;
+import { useAuth } from "../context/AuthProvider";
+import { Navigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [error, setError] = useState(false);
 
+  const { login, user } = useAuth();
   const handleLogin = async () => {
     try {
-      const response: AxiosResponse = await axios.post(
-        `${BASE_URL}/user/login`,
-        { email: email, password: password },
-        { withCredentials: true },
-      );
-      const tokenFromCookie = Cookies.get(response.data.User._id);
-      if (tokenFromCookie !== undefined) {
-        return "";
-      }
+      setError(false);
+      await login(email, password);
     } catch (err) {
-      console.log(err);
+      setError(true);
     }
-    navigate("/");
   };
 
+  if (user !== null) return <Navigate to="/" />;
   return (
     <>
       <Container maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
-            mt: 20,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "primary.light" }}>
+          <Avatar sx={{ m: 1, bgcolor: "#252d35" }}>
             <LockOutlined />
           </Avatar>
-          <Typography variant="h5">Login</Typography>
           <Box sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Dirección de correo"
               name="email"
               autoFocus
               value={email}
@@ -72,7 +60,7 @@ const Login: React.FC = () => {
               fullWidth
               id="password"
               name="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               value={password}
               onChange={(e) => {
@@ -83,11 +71,16 @@ const Login: React.FC = () => {
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, backgroundColor: "#252d35" }}
               onClick={handleLogin}
             >
               Login
             </Button>
+            {error && (
+              <p className="text-center text-red-500">
+                Email o contraseña incorrecta
+              </p>
+            )}
           </Box>
         </Box>
       </Container>

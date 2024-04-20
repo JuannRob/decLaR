@@ -9,7 +9,9 @@ import {
   Chip,
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { Decree } from "../../ts/api.interface";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   decree: Decree;
@@ -17,6 +19,7 @@ interface Props {
 
 const Row: React.FC<Props> = ({ decree }) => {
   const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   const fecha = new Date(decree.fecha);
   const fechaPub = new Date(decree.fecha_pub);
@@ -53,8 +56,22 @@ const Row: React.FC<Props> = ({ decree }) => {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1, padding: 1 }}>
               <ul>
-                <li>
-                  <b>Otras firmas:</b> {decree.otros_firman}
+                <li className="flex justify-between">
+                  <span>
+                    <b>Otras firmas:</b> {decree.otros_firman}
+                  </span>
+                  <IconButton
+                    aria-label="navigate back"
+                    size="medium"
+                    color="primary"
+                    type="button"
+                    onClick={() => navigate("/form/edit")}
+                  >
+                    <BorderColorIcon
+                      fontSize="inherit"
+                      sx={{ color: "#252d35", fontSize: 25 }}
+                    />
+                  </IconButton>
                 </li>
                 <li>
                   <b>Del</b> {fecha.toLocaleDateString()} - <b>Pub.</b>{" "}

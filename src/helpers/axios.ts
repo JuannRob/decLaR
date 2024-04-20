@@ -1,8 +1,10 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { config } from "../config/config";
 
+const BASE_URL = `${config.api.url}/user`;
+
 const customFetch = axios.create({
-  baseURL: `${config.api.url}/users`,
+  baseURL: BASE_URL,
   headers: {
     "Content-type": "application/json",
   },
@@ -11,13 +13,18 @@ const customFetch = axios.create({
 
 customFetch.interceptors.request.use(
   async (config) => {
-    const token = localStorage;
+    const token = localStorage.getItem("accessToken");
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      console.log("Hay access token");
+      config.headers["authorization"] = `Bearer ${token}`;
+    } else {
+      console.log("No hay access token");
     }
     return config;
   },
   (error) => {
+    console.log("Error desde request");
+
     return Promise.reject(error);
   },
 );
@@ -31,9 +38,11 @@ customFetch.interceptors.response.use(
     if (error.response.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const resp = await refreshToken();
+      console.log("Comenzando actualización de token");
 
-      const access_token = resp.response.accessToken;
+      const res = await refreshToken();
+
+      const access_token = res?.headers["authorization"];
       localStorage.setItem("accessToken", access_token);
       customFetch.defaults.headers.common["Authorization"] =
         `Bearer ${access_token}`;
@@ -45,10 +54,19 @@ customFetch.interceptors.response.use(
 
 const refreshToken = async () => {
   try {
-    const resp = await customFetch.get("auth/refresh");
-    console.log("refresh token", resp.data);
-    return resp.data;
+    const res: AxiosResponse = await customFetch.get("/refresh");
+    console.log("Res refresh token", res);
+    return res;
   } catch (e) {
     console.log("Error", e);
+  }
+};
+
+export const getUsers = async () => {
+  try {
+    const res: AxiosResponse = await customFetch.get("/");
+    console.log("RES getUsers: ", res);
+  } catch (err) {
+    console.log(err);
   }
 };
