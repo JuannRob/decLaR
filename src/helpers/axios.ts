@@ -1,9 +1,10 @@
 import axios, { AxiosResponse } from "axios";
+import Cookies from "js-cookie";
 import { config } from "../config/config";
 
 const BASE_URL = `${config.api.url}/user`;
 
-const customFetch = axios.create({
+const axiosConfig = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-type": "application/json",
@@ -11,42 +12,45 @@ const customFetch = axios.create({
   withCredentials: true,
 });
 
-customFetch.interceptors.request.use(
-  async (config) => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      console.log("Hay access token");
-      config.headers["authorization"] = `Bearer ${token}`;
-    } else {
-      console.log("No hay access token");
+axiosConfig.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers["authorization"] = `Bearer ${accessToken}`;
     }
     return config;
   },
   (error) => {
-    console.log("Error desde request");
-
     return Promise.reject(error);
   },
 );
 
-customFetch.interceptors.response.use(
+axiosConfig.interceptors.response.use(
   (response) => {
     return response;
   },
   async function (error) {
     const originalRequest = error.config;
-    if (error.response.status === 403 && !originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      console.log("Comenzando actualización de token");
+      const refTokenFromCookies = Cookies.get("refreshToken");
+      if (refTokenFromCookies) {
+        try {
+          const res = await refreshToken();
 
-      const res = await refreshToken();
-
-      const access_token = res?.headers["authorization"];
-      localStorage.setItem("accessToken", access_token);
-      customFetch.defaults.headers.common["Authorization"] =
-        `Bearer ${access_token}`;
-      return customFetch(originalRequest);
+          const newAccessToken = res?.headers["authorization"];
+          if (newAccessToken) {
+            localStorage.setItem("accessToken", newAccessToken);
+            originalRequest.headers["authorization"] =
+              `Bearer ${newAccessToken}`;
+            return axios(originalRequest);
+          }
+        } catch (error) {
+          console.log("Refresh token failed: ", error);
+          localStorage.removeItem("accessToken");
+        }
+      }
     }
     return Promise.reject(error);
   },
@@ -54,19 +58,20 @@ customFetch.interceptors.response.use(
 
 const refreshToken = async () => {
   try {
-    const res: AxiosResponse = await customFetch.get("/refresh");
-    console.log("Res refresh token", res);
+    const res: AxiosResponse = await axiosConfig.get("/refresh");
     return res;
   } catch (e) {
-    console.log("Error", e);
+    console.log("Error: ", e);
+    throw e;
   }
 };
 
-export const getUsers = async () => {
+export const getUser = async () => {
   try {
-    const res: AxiosResponse = await customFetch.get("/");
-    console.log("RES getUsers: ", res);
-  } catch (err) {
-    console.log(err);
+    const res: AxiosResponse = await axiosConfig.get("/get");
+    return res.data.user;
+  } catch (e) {
+    console.log("Error: ", e);
+    throw e;
   }
 };

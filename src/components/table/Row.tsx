@@ -65,7 +65,7 @@ const Row: React.FC<Props> = ({ decree }) => {
                     size="medium"
                     color="primary"
                     type="button"
-                    onClick={() => navigate("/form/edit")}
+                    onClick={() => navigate("/edit")}
                   >
                     <BorderColorIcon
                       fontSize="inherit"

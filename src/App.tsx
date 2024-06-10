@@ -3,11 +3,10 @@ import Search from "./pages/Search";
 import Results from "./pages/Results";
 import Layout from "./components/layout/Layout";
 import Login from "./pages/Login";
-import AddEdit from "./pages/AddEdit";
+import CreateDec from "./pages/CreateDec";
+import EditDec from "./pages/EditDec";
 import ProtectedRoute from "./components/protectedRoutes/ProtectedRoute";
 import AuthProvider from "./context/AuthProvider";
-import ProtectedAdminRoute from "./components/protectedRoutes/ProtectedAdminRoute";
-import ProtectedEditorRoute from "./components/protectedRoutes/ProtectedEditorRoute";
 
 const App: React.FC = () => {
   return (
@@ -15,15 +14,14 @@ const App: React.FC = () => {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Search />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/decretos" element={<Results />} />
           <Route path="/login" element={<Login />} />
-          <Route path="form" element={<ProtectedRoute />}>
-            <Route element={<ProtectedAdminRoute />}>
-              <Route path="nuevo" element={<AddEdit isNew={true} />} />
-            </Route>
-            <Route element={<ProtectedEditorRoute />}>
-              <Route path="edit" element={<AddEdit isNew={false} />} />
-            </Route>
+          <Route element={<ProtectedRoute roles={["admin"]} />}>
+            <Route path="/nuevo" element={<CreateDec />} />
+          </Route>
+          <Route element={<ProtectedRoute roles={["admin", "editor"]} />}>
+            <Route path="/edit" element={<EditDec />} />
           </Route>
         </Route>
       </Routes>

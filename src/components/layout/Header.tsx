@@ -61,7 +61,7 @@ const Header: React.FC = () => {
                   size="medium"
                   color="primary"
                   type="button"
-                  onClick={() => navigate("/form/nuevo")}
+                  onClick={() => navigate("/nuevo")}
                 >
                   <AddIcon
                     fontSize="inherit"

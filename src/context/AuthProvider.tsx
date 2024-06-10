@@ -1,33 +1,37 @@
-import React, { useContext, createContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import React, { useContext, createContext, useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import { config } from "../config/config";
-import { AuthContextType } from "../ts/auth.interface";
 import { User } from "../ts/api.interface";
+import { getUser } from "../helpers/axios";
+
+type AuthContextType = {
+  user: User | null;
+  login: (email: string, password: string) => void;
+  logout: () => void;
+};
 
 const BASE_URL = `${config.api.url}/user`;
 
 const initialContext = {
   user: null,
-  accessToken: "",
-  refreshToken: "",
   login: () => {},
   logout: () => {},
 };
+
 const AuthContext = createContext<AuthContextType>(initialContext);
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState(
-    localStorage.getItem("accessToken") || "",
-  );
-  const [refreshToken, setRefreshToken] = useState(
-    localStorage.getItem("refreshToken") || "",
-  );
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken") && user === null) {
+      getUser().then((user) => {
+        setUser(user);
+      });
+    }
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -39,34 +43,25 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.data) {
         const newAccessToken = res.headers["authorization"] || "";
-        const newRefreshToken = Cookies.get("refreshToken") || "";
         localStorage.setItem("accessToken", newAccessToken);
         setUser(res.data.user);
-        setAccessToken(newAccessToken);
-        setRefreshToken(newRefreshToken);
-        navigate(-2);
-        return;
       }
+
       throw new Error(res.statusText);
     } catch (err) {
-      throw new Error("Authentication failed");
+      const error = err as Error;
+      throw new Error(error.message);
     }
   };
 
   const logout = () => {
     setUser(null);
-    setAccessToken("");
-    setRefreshToken("");
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    navigate("/");
     return;
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, accessToken, refreshToken, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

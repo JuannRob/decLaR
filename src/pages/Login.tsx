@@ -9,9 +9,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
@@ -21,6 +22,7 @@ const Login: React.FC = () => {
     try {
       setError(false);
       await login(email, password);
+      navigate(-2);
     } catch (err) {
       setError(true);
     }
