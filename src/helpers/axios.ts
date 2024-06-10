@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import Cookies from "js-cookie";
 import { config } from "../config/config";
 
 const BASE_URL = `${config.api.url}/user`;
@@ -34,22 +33,18 @@ axiosConfig.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const refTokenFromCookies = Cookies.get("refreshToken");
-      if (refTokenFromCookies) {
-        try {
-          const res = await refreshToken();
+      try {
+        const res = await refreshToken();
 
-          const newAccessToken = res?.headers["authorization"];
-          if (newAccessToken) {
-            localStorage.setItem("accessToken", newAccessToken);
-            originalRequest.headers["authorization"] =
-              `Bearer ${newAccessToken}`;
-            return axios(originalRequest);
-          }
-        } catch (error) {
-          console.log("Refresh token failed: ", error);
-          localStorage.removeItem("accessToken");
+        const newAccessToken = res?.headers["authorization"];
+        if (newAccessToken) {
+          localStorage.setItem("accessToken", newAccessToken);
+          originalRequest.headers["authorization"] = `Bearer ${newAccessToken}`;
+          return axios(originalRequest);
         }
+      } catch (error) {
+        console.log("Refresh token failed: ", error);
+        localStorage.removeItem("accessToken");
       }
     }
     return Promise.reject(error);
