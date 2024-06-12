@@ -54,9 +54,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("accessToken");
+  const logout = async () => {
+    try {
+      await axios.get(`${BASE_URL}/logout`);
+      localStorage.removeItem("accessToken");
+      setUser(null);
+    } catch (err) {
+      const error = err as Error;
+      throw new Error(error.message);
+    }
     return;
   };
 
